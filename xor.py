@@ -211,7 +211,9 @@ What I have learned from this assignment:
     1. The best way to find error is to do test, using smaller dataset
     2. Should avoid having too many (maybe more than 2) "for" loops iterating in each other
     3. For the "for" loop, be careful about where to put the initialization
-    3. Should try to break long code into smaller functions so I can do test on each small part
+    4. Should try to break long code into smaller functions so I can do test on each small part
+    5. Should avoid using magic numeric numbers, like 4 weights or 12 weights, but should give it as a common / general variable,
+        and then it is much easier to change its value.
 
 """
 
