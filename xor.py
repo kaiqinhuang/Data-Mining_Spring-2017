@@ -13,8 +13,6 @@ Submit your code here, as well as a txt file that lists the weights learned by y
 import numpy as np
 import math
 import random
-import sys
-import pdb
 
 
 def genWeight(number):
@@ -42,7 +40,7 @@ def errorOut(target_b, output_b):
     return error_b
 
 
-def weightAdjust(output_a, error_b, weight):
+def weightUpdate(output_a, error_b, weight):
     weight_updated = weight + error_b * output_a
     return weight_updated
 
@@ -52,36 +50,53 @@ def errorHidden(output_a, error_b, weight):
     return error_a
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 def main():
-    input = np.matrix([[0,0,1], [0,1,1], [1,0,1], [1,1,1]])
+    input = np.reshape([0,0,1, 0,1,1, 1,0,1, 1,1,1], (4,3))
     target = [0,1,1,0]
     weight12 = np.reshape(genWeight(12), (4,3))
     weight4 = np.array(genWeight(4))
 
-    hidden = []
-    for i in range(4):
-        node = dotProduct(input[i], weight12[i])
-        node_sigmoid = sigmoidFunction(node)
-        hidden.append(node_sigmoid)
+    num_training = 12000
+    for _ in range(num_training):
 
-    hidden_np = np.array(hidden)
-    output = dotProduct(hidden_np, weight4)
-    output_sigmoid = sigmoidFunction(output)
+        hidden = []
+        for i in range(4):
+            for j in range(4):
+                node = dotProduct(input[i], weight12[j])
+                node_sigmoid = sigmoidFunction(node)
+                hidden.append(node_sigmoid)
+        hidden = np.reshape(hidden, (4,4))
 
-    print(output_sigmoid)
+        output = []
+        for i in range(4):
+            node_output = dotProduct(hidden[i], weight4)
+            output_sigmoid = sigmoidFunction(node_output)
+            output.append(output_sigmoid)
+
+        weight4_new = weight4
+        weight12_new = weight12
+
+        for i in range(4):  # Counter for four sets of input
+            error_out = errorOut(target[i], output[i])
+            weight4_new_temp = []
+            weight12_new_temp = []
+            for j in range(4):  # Counter for four hidder layer nodes and weights connecting output
+                weight4_new_element = weightUpdate(hidden[i][j], error_out, weight4_new[j])
+                weight4_new_temp.append(weight4_new_element)
+
+                error_hidden = errorHidden(hidden[i][j], error_out, weight4_new[j])
+                for r in range(3):  # Counter for three input variables
+                    weight12_new_element = weightUpdate(input[i][r], error_hidden, weight12_new[j][r])
+                    weight12_new_temp.append(weight12_new_element)
+
+            weight4_new = weight4_new_temp
+            weight12_new = np.reshape(weight12_new_temp, (4,3))
+
+
+    print(weight4_new)
+    print(target)
+    print(output)
+    print(weight12_new)
 
 
 if __name__ == "__main__":
